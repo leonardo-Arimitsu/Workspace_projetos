@@ -29,6 +29,9 @@ if "b" not in st.session_state:
 if "c" not in st.session_state:
     st.session_state.c=0
 
+# -------------------------
+# Criação da função limpar
+# -------------------------
 def limpar():
     st.session_state.a=1
     st.session_state.b=0
@@ -79,4 +82,79 @@ if calcular:
             st.success("A equação possui duas raízes iguais")
             st.write(f"**x1 = x2 = {x1:.1f}**")
         else:
-            pass
+            x1 = -b+math.sqrt(delta)/2*a
+            x2 = -b-math.sqrt(delta)/2*a
+
+            st.success("A equação possui duas raízes reais distintas")
+
+            st.write(f"**x1 = {x1:.2f}**")
+            st.write(f"**x2 = {x2:.2f}**")
+
+# -------------------------
+# Gráfico
+# -------------------------
+
+st.subheader("📊 Gráfico da Equação")
+
+xv = -b/(2*a)
+
+x = np.linspace(xv-10, xv+10, 500)
+y = a*x**2 +b*x+c
+
+fig, ax = plt.subplot(figsize=(8, 5))
+
+ax.plot(x, y, linewidth=2, label="f(x)")
+
+# -------------------------
+# Eixos
+# -------------------------
+
+ax.axhline(0, linewidth=1)
+ax.axvline(0, linewidth=1)
+
+# -------------------------
+# Vértice
+# -------------------------
+
+yv = a*xv**2+b*xv+c
+
+ax.scatter(
+    xv,
+    yv,
+    s=80,
+    label="Vértice"
+)
+
+# -------------------------
+# Raízes
+# -------------------------
+
+if delta>=0:
+    if x1 is not None:
+        ax.scatter(
+            x1,
+            0,
+            s=80,
+            label="Raíz x1"
+        )
+    if x2 is not None and delta >0:
+        ax.scatter(
+            x2,
+            0,
+            s=80,
+            label="Raíz x2"
+        )
+
+ax.set_title(f"f(x) = {a}x² + {b}x + {c}")
+ax.set_xlabel("x")
+ax.set_ylabel("f(x)")
+ax.grid(True)
+ax.legend()
+
+set.pylot(fig)
+
+# -------------------------
+# Informações adicionais
+# -------------------------
+
+st.subheader("📋 Informações Adicionais")
