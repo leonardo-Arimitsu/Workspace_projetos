@@ -1,3 +1,5 @@
+# Integrantes Gabriel Felipe de Oliveira, Leonardo Santos Arimitsu
+
 # mostrar imposto de renda
 # pedir salario bruto
 # calcular porcentual de desconto
