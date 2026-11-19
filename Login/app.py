@@ -1,3 +1,4 @@
+
 from conexao import conectar
 import streamlit as st
 import dashboard
@@ -11,68 +12,78 @@ st.set_page_config(
 
 # Controle da sessão
 if "logado" not in st.session_state:
-    st.session_state=False
+    st.session_state.logado = False
 
 if "usuario" not in st.session_state:
-    st.session_state=""
+    st.session_state.usuario = ""
 
 # Função para verificação de login
 def verificar_login(usuario, senha):
-    conexao=conectar()
 
-    cursor= conexao.cursor()
+    conexao = conectar()
+    cursor = conexao.cursor()
 
     # Instruções de multiplas linhas
-    sql="""
-        select id, usuario
-        from usuarios
-        where usuario=%s
-        and senha=%s
+    sql = """
+        SELECT id, usuario
+        FROM usuarios
+        WHERE usuario = %s
+        AND senha = %s
     """
 
     cursor.execute(sql, (usuario, senha))
 
-    resultado=cursor.fetchone()
+    resultado = cursor.fetchone()
 
     cursor.close()
-
     conexao.close()
 
     return resultado
 
+
 # Tela de login
 if not st.session_state.logado:
-    st.title("🔐Sistema de login")
+
+    st.title("🔐 Sistema de login")
     st.write("Informe suas credenciais para acessar o sistema.")
     st.divider()
 
-    usuario=st.text_input(
-        "Usuario"
+    usuario = st.text_input("Usuário")
+
+    senha = st.text_input(
+        "Senha",
+        type="password"
     )
 
-    senha=st.text_input(
-        "Senha"
-    )
+    if st.button("Entrar", use_container_width=True):
 
-if st.button("Entrar", use_container_width=True):
-    if usuario and senha:
-        try:
-            resultado=verificar_login(
-                usuario,
-                senha
-            )
-            if resultado:
-                st.session_state.logado=True
-                st.session_state.usuario=resultado[1]
-                st.success("Acesso autorizado!")
-                st.rerun
-            else:
-                st.error("Usuario ou senha incorretos")
-        except Exception as error:
-            st.error("Erro ao acessar o banco:[erro]")
-    else:
-        st.warning("Preencha o usuario e a senha!")
+        if usuario and senha:
 
-# Redirecionando o usuario para o arquivo dashboard
-else:
+            try:
+                resultado = verificar_login(
+                    usuario,
+                    senha
+                )
+
+                if resultado:
+
+                    st.session_state.logado = True
+                    st.session_state.usuario = resultado[1]
+
+                    st.success("Acesso autorizado!")
+
+                    st.rerun()
+
+                else:
+                    st.error("Usuário ou senha incorretos!")
+
+            except Exception as error:
+                st.error(f"Erro ao acessar o banco: {error}")
+
+        else:
+            st.warning("Preencha o usuário e a senha!")
+
+# Redirecionamento para o dashboard
+if st.session_state.logado:
+
     dashboard.exibir()
